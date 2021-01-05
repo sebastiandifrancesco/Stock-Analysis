@@ -5,10 +5,10 @@ Sub Stock_Analysis()
     'Loop that cycles through the worksheets in the workbook
     For Each ws In Worksheets
         ' Create new columns with Summary table labels
-        Cells(1, 9).Value = "Ticker"
-        Cells(1, 10).Value = "Yearly Change"
-        Cells(1, 11).Value = "Percent Change"
-        Cells(1, 12).Value = "Total Stock Volume"
+        ws.Cells(1, 9).Value = "Ticker"
+        ws.Cells(1, 10).Value = "Yearly Change"
+        ws.Cells(1, 11).Value = "Percent Change"
+        ws.Cells(1, 12).Value = "Total Stock Volume"
         
         ' Set variable that holds a <ticker> value
         Dim ticker_value As String
@@ -103,5 +103,7 @@ Sub Stock_Analysis()
                 percent_change = 0
             End If
         Next i
+        'Autofit table columns
+        ws.Columns("I:L").EntireColumn.AutoFit
     Next ws
 End Sub

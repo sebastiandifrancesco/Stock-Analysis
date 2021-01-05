@@ -1,0 +1,107 @@
+Sub Stock_Analysis()
+    ' Sets variable that gets used to cycle through the worksheets
+    Dim current_ws As Worksheets
+    
+    'Loop that cycles through the worksheets in the workbook
+    For Each ws In Worksheets
+        ' Create new columns with Summary table labels
+        Cells(1, 9).Value = "Ticker"
+        Cells(1, 10).Value = "Yearly Change"
+        Cells(1, 11).Value = "Percent Change"
+        Cells(1, 12).Value = "Total Stock Volume"
+        
+        ' Set variable that holds a <ticker> value
+        Dim ticker_value As String
+        
+        ' Set variable that holds total volume of stock traded
+        Dim total_vol As Double
+        total_vol = 0
+        
+        ' Set variable that tracks location for each <ticker> in the summary table
+        Dim rowcount As Long
+        rowcount = 2
+        
+        ' Set variable that holds year open price
+        Dim year_open_price As Double
+        year_open_price = 0
+        
+        ' Set variable that holds year close price
+        Dim year_close_price As Double
+        year_close_price = 0
+        
+        ' Set variable that holds change in price for the year
+        Dim change_in_price As Double
+        change_in_price = 0
+        
+        'Set variable that holds the percent change in price for the year
+        Dim percent_chagne As Double
+        percent_change = 0
+        
+        ' Set variable for total rows to loop through
+        Dim lastrow As Long
+        lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+        ' Loop that searches through ticker symbols
+        For i = 2 To lastrow
+            
+            ' Conditional that saves year open price to year_open_price
+            If ws.Cells(i, 1).Value <> ws.Cells(i - 1, 1).Value Then
+                year_open_price = ws.Cells(i, 3).Value
+            End If
+            
+            ' Add up all the volumes to determine total stock volume for the year
+            total_vol = total_vol + ws.Cells(i, 7)
+            
+            ' Conditional to determine if the ticker symbol is changing
+            If ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
+                
+                ' Put ticker symbol in summary table
+                ws.Cells(rowcount, 9).Value = ws.Cells(i, 1).Value
+                
+                ' Put total stock vlume in the summary table
+                ws.Cells(rowcount, 12).Value = total_vol
+                
+                ' Set close price to year_close
+                year_close_price = ws.Cells(i, 6).Value
+                
+                ' Calculate price change for the year and put it in summary table
+                change_in_price = year_close_price - year_open_price
+                ws.Cells(rowcount, 10).Value = change_in_price
+                
+                'Conditional that formats by highlighting positive or negative change
+                If change_in_price >= 0 Then
+                    ws.Cells(rowcount, 10).Interior.ColorIndex = 4
+                Else
+                    ws.Cells(rowcount, 10).Interior.ColorIndex = 3
+                End If
+                
+                'Calculate percent change for the year and put it into summary table as a percentage
+                If year_open_price = 0 And year_close_price = 0 Then
+                    'Starting and ending at zero would net zero percent increase. Catching this doesn't require a formula because you can't divide by zero.
+                    percent_change = 0
+                    ws.Cells(rowcount, 11).Value = percent_change
+                    ws.Cells(rowcount, 11).NumberFormat = "0.00%"
+                ElseIf year_open_price = 0 Then
+                ' A stock that starts at zero and increases means it grew at an infinite percent. If this is the case we only have to evaluate actual price increase by dollar amount. For the percent change we will mark it as "New Stock"
+                Dim percent_change_new_stock As String
+                percent_change_new_stock = "New Stock"
+                ws.Cells(rowcount, 11).Value = percent_change_new_stock
+                Else
+                    percent_change = change_in_price / year_open_price
+                    ws.Cells(rowcount, 11).Value = percent_change
+                    ws.Cells(rowcount, 11).NumberFormat = "0.00%"
+                End If
+                
+                'Add 1 to rowcount to keep track of the next empty row in the summary table for unique ticker symbols
+                rowcount = rowcount + 1
+                
+                ' Reset total stock volume, year open price, year close price, change in price, and percent change
+                total_vol = 0
+                year_open_price = 0
+                year_close_price = 0
+                change_in_price = 0
+                percent_change = 0
+            End If
+        Next i
+    Next ws
+End Sub

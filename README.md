@@ -8,7 +8,7 @@ The script works by following these commands in a loop:
 2) Add up all the volumes to determine total stock volume for the year
 3) Determine if the ticker symbol is changing using conditional
 
-The pictures below are of the years 2014, 2015, and 2016:
+The pictures below are of the years 2014, 2015, and 2016 and represent the beginning of the final analysis:
 
 ![Image description](https://github.com/sebastiandifrancesco/Stock-Analysis/blob/main/Picture-of-each-year/2014.PNG)
 
